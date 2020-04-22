@@ -54,12 +54,12 @@ client.on('message', (message) => {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).split(/ +/);
-    const command = args.shift().toLowerCase();
+    const commandName = args.shift().toLowerCase();
+    const command = client.Commands.get(commandName) || client.Commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-    if (!client.Commands.has(command)) return;
-
+    if(!command) return
     try {
-        client.Commands.get(command).run(message, args);
+        command.run(message, args,client);
     } catch (error) {
         console.error(error);
         message.reply('there was an error trying to execute that command!');
