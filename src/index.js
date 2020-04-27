@@ -9,6 +9,15 @@ const fetch = require('node-fetch');
 const moment = require('moment');
 const chalk = require('chalk');
 const { prefix, token } = require('./config.json');
+const { Pool, Client } = require('pg')
+
+const pool = new Pool({
+  user: 'postgres',
+  host: '192.168.99.100',
+  database: 'postgres',
+  password: 'yourPassword',
+  port: 5432
+});
 
 // initialize client, commands and logger
 const client = new discord.Client();
@@ -48,6 +57,12 @@ client.on('guildCreate', (guild) => {
     if (guild.systemChannel) {
         guild.systemChannel.send('Hi, I am Misty Bot')
     }
+    console.log(guild.id)
+    pool
+    .query(`INSERT INTO servers (serverid) VALUES ('${guild.id}')`)
+    .then(res => console.log(res.rows[0]))
+    .catch(e => console.error(e.stack))
+    
 });
 
 client.on('message', (message) => {
